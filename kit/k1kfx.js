@@ -13,8 +13,9 @@
   var K = {
     links: {
       home: { label: "K1KFX", url: "https://k1kfx.com/" },
-      // Interim addresses. Final targets: pota.k1kfx.com, sats.k1kfx.com, hunt.k1kfx.com
-      pota: { label: "Parks on the Air", url: "https://parks.k1kfx.com/" },
+      // Interim addresses for sats and hunt. Final targets: sats.k1kfx.com, hunt.k1kfx.com
+      pota: { label: "Parks on the Air", url: "https://pota.k1kfx.com/" },
+      parks: { label: "Rare Parks Finder", url: "https://pota.k1kfx.com/parks/" },
       sats: { label: "Satellites", url: "https://k1kfx.com/satellites/" },
       hunt: { label: "Fox Hunting", url: "https://k1kfx.com/fox/" },
       qrz:  { label: "QRZ", url: "https://www.qrz.com/db/K1KFX" },
