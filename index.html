@@ -3,304 +3,222 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>K1KFX · Fox Hunts</title>
-  <meta name="description" content="K1KFX — amateur radio fox hunts in Lincoln, Nebraska. How to record your bearings with Fox Pursuit.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <title>K1KFX · Jeremy Smith</title>
+  <meta name="description" content="K1KFX, Jeremy Smith of Lincoln, Nebraska. Teacher by nature, counselor by trade, radio by hobby: Parks on the Air, amateur satellites and fox hunts.">
+  <link rel="stylesheet" href="/kit/k1kfx.css">
+  <script src="/kit/k1kfx.js" defer></script>
   <style>
-    :root {
-      --bg: #0f1412;
-      --ink: #f2efe6;
-      --muted: #9aa69f;
-      --accent: #ff6a1a;
-      --accent-ink: #120a05;
-      --line: #26302b;
-      --card: #151c19;
+    /* ── Hero ── */
+    .hero { padding: 48px 0 56px; }
+    .hero-title {
+      display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between;
+      gap: 12px 32px; margin-bottom: 32px;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background: var(--bg);
-      color: var(--ink);
-      font-family: "IBM Plex Mono", ui-monospace, monospace;
-      line-height: 1.6;
-      padding: 0 16px;
-      background-image:
-        radial-gradient(circle at 50% 210px, transparent 0 120px, var(--line) 121px, transparent 122px),
-        radial-gradient(circle at 50% 210px, transparent 0 220px, var(--line) 221px, transparent 222px),
-        radial-gradient(circle at 50% 210px, transparent 0 330px, var(--line) 331px, transparent 332px);
-      background-repeat: no-repeat;
-    }
-    .wrap { max-width: 640px; margin: 0 auto; }
-
-    /* ── Header ── */
-    header {
-      text-align: center;
-      padding: 64px 0 48px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 24px;
-    }
-    .tag {
-      font-size: 13px;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-    h1 {
-      font-family: "Archivo Black", sans-serif;
-      font-size: clamp(64px, 18vw, 160px);
-      line-height: 0.9;
-      letter-spacing: -0.02em;
-    }
-    p.lede {
-      max-width: 34ch;
-      font-size: 17px;
-      line-height: 1.55;
-      color: var(--muted);
-    }
-
-    /* ── Buttons ── */
-    .btn {
-      display: inline-block;
-      font-family: "Archivo Black", sans-serif;
-      text-transform: uppercase;
-      text-decoration: none;
-      border-radius: 6px;
-      transition: transform 0.12s ease, box-shadow 0.12s ease, color 0.12s ease, border-color 0.12s ease;
-      text-align: center;
-    }
-    .btn-primary {
-      background: var(--accent);
-      color: var(--accent-ink);
-      font-size: clamp(22px, 5vw, 30px);
-      padding: 22px 44px;
-      box-shadow: 0 0 0 4px var(--bg), 0 0 0 6px var(--accent);
-    }
-    .btn-primary:hover, .btn-primary:focus-visible {
-      transform: translateY(-2px);
-      box-shadow: 0 0 0 4px var(--bg), 0 0 0 6px var(--accent), 0 12px 32px rgba(255,106,26,0.35);
-      outline: none;
-    }
-    .btn-secondary {
-      background: transparent;
-      color: var(--ink);
-      border: 2px solid var(--muted);
-      font-size: clamp(18px, 4vw, 22px);
-      padding: 18px 32px;
-    }
-    .btn-secondary:hover, .btn-secondary:focus-visible {
-      border-color: var(--accent);
-      color: var(--accent);
-      outline: none;
-    }
-    .btn-row {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-      gap: 20px;
-      margin-top: 32px;
-    }
-
-    /* ── Sections ── */
-    section {
+    .hero h1 { font-size: clamp(76px, 15vw, 196px); margin-left: -0.04em; }
+    .hero-where { display: grid; gap: 4px; padding-bottom: 0.6em; }
+    @media (min-width: 700px) { .hero-where { text-align: right; } }
+    .hero-row {
+      display: grid; gap: 24px 64px;
+      grid-template-columns: 1fr;
+      align-items: end;
       border-top: 1px solid var(--line);
-      padding: 40px 0;
+      padding-top: 28px;
     }
-    h2 {
-      font-family: "Archivo Black", sans-serif;
-      font-size: clamp(22px, 5vw, 28px);
-      text-transform: uppercase;
-      letter-spacing: 0.01em;
-      margin-bottom: 16px;
-    }
-    h2 .num { color: var(--accent); margin-right: 10px; }
-    section > p { color: var(--muted); font-size: 16px; }
+    @media (min-width: 860px) { .hero-row { grid-template-columns: 1fr 1.1fr; } }
+    .motto { font-size: clamp(30px, 4.2vw, 50px); line-height: 1.08; }
+    .motto span { display: block; }
+    .motto b { font-weight: 400; color: var(--accent-text); }
+    .intro { font-size: 19px; color: var(--muted); }
+    .intro strong { color: var(--ink); }
 
-    ol.steps {
-      list-style: none;
-      counter-reset: step;
-      display: grid;
-      gap: 14px;
-      margin-top: 8px;
+    /* ── The three doors ── */
+    .doors { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); padding-bottom: 96px; }
+    .door { display: grid; grid-template-rows: auto 1fr auto; gap: 36px; padding: 28px; min-height: 260px; }
+    .door svg { width: 34px; height: 34px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .door h2 { margin: 0 0 10px; font-size: clamp(22px, 2.1vw, 26px); }
+    .door p { color: var(--muted); font-size: 15px; }
+    .door .go {
+      display: flex; justify-content: space-between; align-items: center;
+      font-weight: 600; font-size: 15px;
     }
-    ol.steps li {
-      counter-increment: step;
-      position: relative;
-      padding: 14px 16px 14px 60px;
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      font-size: 16px;
+    .door .go i {
+      font-style: normal; width: 40px; height: 40px; border-radius: 50%;
+      display: grid; place-items: center;
+      background: var(--ink); color: var(--bg);
+      transition: background .15s, transform .15s;
     }
-    ol.steps li::before {
-      content: counter(step);
-      position: absolute;
-      left: 16px;
-      top: 12px;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background: var(--accent);
-      color: var(--accent-ink);
-      font-family: "Archivo Black", sans-serif;
-      font-size: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    strong { color: var(--ink); font-weight: 600; }
+    .door:hover .go i { background: var(--accent); color: var(--accent-ink); transform: rotate(-45deg); }
 
-    .buddy {
-      margin-top: 20px;
-      padding: 16px;
-      border: 2px dashed var(--accent);
-      border-radius: 8px;
-      font-size: 15px;
-      color: var(--muted);
-    }
-    .buddy b {
-      display: block;
-      color: var(--accent);
-      font-family: "Archivo Black", sans-serif;
-      text-transform: uppercase;
-      font-weight: normal;
-      letter-spacing: 0.02em;
-      margin-bottom: 4px;
-    }
+    /* ── Section heads ── */
+    .kicker { font-size: 14px; }
+    .head { display: grid; gap: 12px 64px; grid-template-columns: 1fr; margin-bottom: 48px; }
+    @media (min-width: 860px) { .head.two { grid-template-columns: 1fr 1fr; align-items: end; } }
+    .head h2 { margin: 8px 0 0; }
+    .head p { color: var(--muted); }
 
-    ul.tips { list-style: none; display: grid; gap: 14px; }
-    ul.tips li {
-      padding-left: 22px;
-      position: relative;
-      font-size: 16px;
-      color: var(--muted);
+    /* ── Photo + words rows ── */
+    .split { display: grid; gap: 32px 64px; grid-template-columns: 1fr; align-items: center; }
+    @media (min-width: 860px) {
+      .split { grid-template-columns: 1fr 1fr; }
+      .split.flip > :first-child { order: 2; }
     }
-    ul.tips li::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0.6em;
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: var(--accent);
-    }
-    code {
-      font-family: inherit;
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 4px;
-      padding: 1px 6px;
-      color: var(--ink);
-    }
+    .k-photo.wide { aspect-ratio: 16 / 9; }
 
-    .video { margin-top: 24px; }
-    .video h3 { font-size: 16px; font-weight: 600; }
-    .video p { font-size: 14px; color: var(--muted); margin-bottom: 10px; }
-    .frame {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      overflow: hidden;
-      background: var(--card);
-    }
-    .frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .quote { font-size: clamp(26px, 3vw, 36px); line-height: 1.15; }
+    .quote::before { content: "“"; color: var(--accent-text); }
+    .quote::after { content: "”"; color: var(--accent-text); }
 
-    footer {
-      text-align: center;
-      font-size: 12px;
-      color: var(--muted);
-      padding: 24px 0;
-      border-top: 1px solid var(--line);
-      line-height: 1.8;
-    }
-    footer a { color: var(--muted); }
+    .work-links { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-top: 56px; }
+    .work-links .k-card { display: grid; gap: 6px; padding: 28px; }
+    .work-links .k-tag { margin-bottom: 8px; }
+    .work-links strong { font-family: var(--font-display); font-weight: normal; font-size: 24px; line-height: 1.1; letter-spacing: -0.02em; }
+    .work-links span { color: var(--muted); font-size: 15px; }
+    .work-links .arrow { color: var(--ink); font-weight: 600; margin-top: 16px; }
 
-    @media (max-width: 480px) {
-      header { padding-top: 48px; }
-      h2 { font-size: 20px; }
-      h2 .num { margin-right: 6px; }
-      .btn-primary { padding: 20px 32px; }
-      .btn-row .btn { width: 100%; }
-    }
+    .chips { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+    .chips li { border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; font-size: 14px; }
+
+    .hobby { display: grid; gap: 72px; }
+    .hobby h3 { font-size: clamp(28px, 3.4vw, 40px); margin: 0 0 14px; }
+    .hobby p { color: var(--muted); }
+    .hobby .k-btn { margin-top: 24px; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div class="tag">Amateur Radio · Lincoln, NE</div>
-      <h1>K1KFX</h1>
-      <a class="btn btn-primary" href="https://k1kfx.com/hunt/dashboard.html">Start Hunting →</a>
+  <div class="k-wrap">
+
+    <header class="hero">
+      <div class="hero-title">
+        <h1 class="k-display">K1KFX</h1>
+        <div class="hero-where">
+          <div class="k-tag kicker"><span class="dot"></span>Amateur radio</div>
+          <div class="k-tag kicker">Lincoln, Nebraska</div>
+        </div>
+      </div>
+      <div class="hero-row">
+        <p class="motto k-serif">
+          <span>Teacher by <b>nature</b>,</span>
+          <span>Counselor by <b>trade</b>,</span>
+          <span>Radio by <b>hobby</b>.</span>
+        </p>
+        <p class="intro">I'm <strong>Jeremy Smith</strong>. If we just talked on the air, thanks for the contact. Here's what I'm doing on the radio, and what I do the rest of the week.</p>
+      </div>
     </header>
 
-    <main>
-      <section aria-labelledby="how">
-        <h2 id="how"><span class="num">1</span>Kickoff</h2>
-        <p>Fox frequencies are revealed on K0KKV at the starting time. Log your bearings in the app and radio them to net control.</p>
-      </section>
-
-      <section aria-labelledby="steps">
-        <h2 id="steps"><span class="num">2</span>How to Hunt</h2>
-        <ol class="steps">
-          <li><strong>Start Hunting</strong> → sign in → <strong>Create Hunt</strong>.</li>
-          <li>Turn on <strong>tracking</strong> (GPS + compass).</li>
-          <li>Point at the signal, tap <strong>Submit</strong>.</li>
-          <li>Radio your location and bearing to net control.</li>
-          <li>Found it? <strong>Close the hunt</strong>, start a new one.</li>
-        </ol>
-
-        <div class="buddy">
-          <b>Optional: buddy up</b>
-          One hunt, you both join it, one shared map.
+    <nav class="doors" aria-label="Radio projects">
+      <a class="k-card door" data-k1kfx-link="pota" href="https://parks.k1kfx.com/">
+        <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 4 9 20h6L7 31h26l-8-11h6Z"/><path d="M20 31v6"/></svg>
+        <div>
+          <h2>Parks on the Air</h2>
+          <p>Portable radio from parks, and maps of the places we reached.</p>
         </div>
-      </section>
+        <span class="go">Explore parks <i>→</i></span>
+      </a>
+      <a class="k-card door" data-k1kfx-link="sats" href="https://k1kfx.com/satellites/">
+        <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 22 31 9"/><path d="M8 18a14 14 0 0 0 14 14L8 18Z"/><path d="M15 32h14"/><path d="M27 5a8 8 0 0 1 8 8"/></svg>
+        <div>
+          <h2>Satellites</h2>
+          <p>Talking through satellites with a handheld radio, and a planner for good pass times.</p>
+        </div>
+        <span class="go">Plan a pass <i>→</i></span>
+      </a>
+      <a class="k-card door" data-k1kfx-link="hunt" href="/fox/">
+        <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="3"/><path d="M12 12a11 11 0 0 0 0 16m16-16a11 11 0 0 1 0 16M7 7a18 18 0 0 0 0 26m26-26a18 18 0 0 1 0 26"/></svg>
+        <div>
+          <h2>Fox Hunting</h2>
+          <p>Locating a hidden transmitter using radio direction finding skills.</p>
+        </div>
+        <span class="go">Join a hunt <i>→</i></span>
+      </a>
+    </nav>
 
-      <section aria-labelledby="tips">
-        <h2 id="tips"><span class="num">3</span>Tips</h2>
-        <ul class="tips">
-          <li><strong>Name your hunt</strong> call + fox#: <code>K1KFX-1</code></li>
-          <li><strong>8 or fewer</strong> good bearings for best results.</li>
-          <li><strong>Figure-8</strong> the phone to calibrate compass.</li>
-          <li><strong>Offline map:</strong> Download on Wi-Fi before leaving.</li>
-        </ul>
-      </section>
+    <section class="k-section" aria-labelledby="work">
+      <div class="head">
+        <div class="k-tag kicker"><span class="dot"></span>By trade</div>
+        <h2 id="work">Counselor</h2>
+      </div>
 
-      <section aria-labelledby="videos">
-        <h2 id="videos"><span class="num">4</span>Videos</h2>
+      <div class="split">
+        <p class="quote k-serif">I love seeing couples flourish in spite of the hard things they've been through.</p>
+        <div class="k-muted">
+          <p>I'm a professional counselor in Lincoln, Nebraska, specializing in marriage, addiction, trauma and emotional health.</p>
+          <p>I enjoy guiding people on a journey toward emotional, mental and spiritual health and maturity.</p>
+          <p>That work happens through my practice, Smith Counseling, and through the Marriage Recovery Course, which helps couples heal from betrayal and addiction together.</p>
+        </div>
+      </div>
 
-        <div class="video">
-          <h3>Fox Pursuit overview</h3>
-          <div class="frame">
-            <iframe src="https://www.youtube-nocookie.com/embed/AtWXc-IGKhY" title="Fox Pursuit overview" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>
+      <div class="work-links">
+        <a class="k-card" data-k1kfx-link="sc" href="https://smithcounseling.org/">
+          <span class="k-tag">smithcounseling.org</span>
+          <strong>Smith Counseling</strong>
+          <span>Faith-friendly mental health care in Lincoln, NE.</span>
+          <span class="arrow">Visit the practice →</span>
+        </a>
+        <a class="k-card" data-k1kfx-link="mrc" href="https://www.marriagerecoverycourse.com/">
+          <span class="k-tag">marriagerecoverycourse.com</span>
+          <strong>Marriage Recovery Course</strong>
+          <span>Heal betrayal and addiction as allies, not adversaries.</span>
+          <span class="arrow">See the course →</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="k-section" aria-labelledby="teach">
+      <div class="split">
+        <div class="k-photo"><img src="/img/teaching.jpg" width="372" height="300" alt="Jeremy teaching a ham radio class about 20 years ago, with callsigns on the whiteboard" loading="lazy"></div>
+        <div>
+          <div class="k-tag kicker"><span class="dot"></span>By nature</div>
+          <h2 id="teach">Teacher</h2>
+          <p class="k-muted">My first career was 11 years in the classroom. Back then I was active in ham radio and led a radio club for students.</p>
+          <p class="k-muted">Now my oldest son is that age, and I lead a club for him and his friends. That's what brought me back to the hobby after 20 years away.</p>
+          <ul class="chips" aria-label="Subjects I taught">
+            <li>Physics</li><li>Earth Science</li><li>Physical Science</li><li>German</li><li>Japanese</li><li>Ballroom dance</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="k-section" aria-labelledby="air">
+      <div class="head two">
+        <div>
+          <div class="k-tag kicker"><span class="dot"></span>By hobby</div>
+          <h2 id="air">On the air</h2>
+        </div>
+        <p>Radio is where physics, engineering and computers meet. I love teaching kids the science behind the magic, whether it's GMRS, building a Moxon antenna, fox hunting or tracking satellites. The teaching is still in my blood.</p>
+      </div>
+
+      <div class="hobby">
+        <div class="split">
+          <div class="k-photo wide"><img src="/img/pota-setup.jpg" width="1600" height="900" alt="A red car parked beside a picnic table with a radio and a tall portable antenna mast in a park" loading="lazy"></div>
+          <div>
+            <h3>Parks on the Air</h3>
+            <p>I set up a portable station in a park and make as many contacts as I can, often at parks that few people have activated. Afterwards we color in a map of every state we reached.</p>
+            <a class="k-btn k-btn-secondary" data-k1kfx-link="pota" href="https://parks.k1kfx.com/">Rare parks finder →</a>
           </div>
         </div>
 
-        <div class="video">
-          <h3>iPhone setup</h3>
-          <p>iPhone only. Skip activation.</p>
-          <div class="frame">
-            <iframe src="https://www.youtube-nocookie.com/embed/puCFdVMl8XE?start=3" title="Fox Pursuit iPhone setup" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>
+        <div class="split flip">
+          <div class="k-photo wide"><img src="/img/sats-kids.jpg" width="1600" height="900" alt="Five boys in a backyard holding up handheld radios and satellite antennas" loading="lazy"></div>
+          <div>
+            <h3>Satellites</h3>
+            <p>A handheld radio and antenna are enough to talk through a satellite passing overhead. I plan club events around the times when several good passes come close together.</p>
+            <a class="k-btn k-btn-secondary" data-k1kfx-link="sats" href="https://k1kfx.com/satellites/">Plan a pass →</a>
           </div>
         </div>
-      </section>
 
-      <section>
-        <div class="btn-row" style="margin-top:0">
-          <a class="btn btn-secondary" href="https://k1kfx.com/hunt/instructions.html">Full Instructions</a>
-          <a class="btn btn-primary" href="https://k1kfx.com/hunt/dashboard.html">Start Hunting →</a>
+        <div class="split">
+          <div class="k-photo wide"><img src="/img/fox-kids.jpg" width="1600" height="900" alt="Five boys with bikes on a trail, holding radios and direction-finding antennas" loading="lazy"></div>
+          <div>
+            <h3>Fox Hunting</h3>
+            <p>Someone hides a transmitter and everyone else tracks it down using radio direction finding. We log bearings in the Fox Pursuit app and share them with net control.</p>
+            <a class="k-btn k-btn-secondary" data-k1kfx-link="hunt" href="/fox/">Learn more →</a>
+          </div>
         </div>
-      </section>
-    </main>
+      </div>
+    </section>
 
-    <footer>
-      K1KFX · <a href="https://www.qrz.com/db/K1KFX">QRZ</a><br>
-      <a href="https://foxpursuit.com">Fox Pursuit</a> was created by Drew Lindsay, <a href="https://www.qrz.com/db/WA0MCS">WA0MCS</a>
-    </footer>
   </div>
+
+  <footer data-k1kfx-footer></footer>
 </body>
 </html>

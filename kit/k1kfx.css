@@ -1,0 +1,153 @@
+/* ============================================================================
+   K1KFX shared kit: the one look for k1kfx.com and every subdomain.
+   Load it from any K1KFX site with:
+     <link rel="stylesheet" href="https://k1kfx.com/kit/k1kfx.css">
+     <script src="https://k1kfx.com/kit/k1kfx.js" defer></script>
+   Page-specific styles go in the page; shared pieces go here.
+   ========================================================================== */
+@import url("https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap");
+
+:root {
+  --bg: #ffffff;
+  --ink: #0e0e0e;
+  --muted: #5e5e5e;
+  --accent: #ff3d1f;      /* fills, dots, rules */
+  --accent-text: #d42b0e; /* accent used as text on the background */
+  --accent-ink: #ffffff;  /* text on an accent fill */
+  --line: #e4e4e4;
+  --card: #f5f5f5;
+  --card-hover: #efefef;
+  --radius: 14px;
+  --wrap: 1200px;
+  --font-display: "Archivo Black", system-ui, sans-serif;
+  --font-serif: "Instrument Serif", Georgia, serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b0b0c;
+    --ink: #f3f3f3;
+    --muted: #9b9b9b;
+    --accent: #ff4a2b;
+    --accent-text: #ff6b52;
+    --accent-ink: #0b0b0c;
+    --line: #262628;
+    --card: #151517;
+    --card-hover: #1c1c1f;
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a { color: var(--ink); text-decoration-color: var(--accent); text-underline-offset: 3px; }
+a:hover { color: var(--accent-text); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+strong { font-weight: 600; }
+
+.k-wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 16px; }
+@media (min-width: 760px) { .k-wrap { padding: 0 40px; } }
+.k-narrow { max-width: 760px; }
+
+/* ── Type ── */
+.k-tag {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.k-tag .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin-right: 8px; vertical-align: 1px; }
+.k-display { font-family: var(--font-display); line-height: 0.88; letter-spacing: -0.035em; }
+.k-serif { font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: -0.01em; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: normal; line-height: 1.05; letter-spacing: -0.02em; }
+h2 { font-size: clamp(32px, 6vw, 64px); margin-bottom: 20px; }
+h3 { font-size: 24px; margin-bottom: 8px; }
+.k-muted { color: var(--muted); }
+p + p { margin-top: 1em; }
+
+/* ── Sections ── */
+.k-section { border-top: 1px solid var(--line); padding: 72px 0; }
+@media (min-width: 760px) { .k-section { padding: 112px 0; } }
+
+/* ── Buttons ── */
+.k-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 999px;
+  padding: 14px 26px;
+  font-size: 16px;
+  transition: background .15s, color .15s, border-color .15s, transform .15s;
+}
+.k-btn-primary { background: var(--accent); color: var(--accent-ink); }
+.k-btn-primary:hover { color: var(--accent-ink); transform: translateY(-1px); filter: brightness(1.05); }
+.k-btn-secondary { color: var(--ink); border: 1px solid var(--ink); }
+.k-btn-secondary:hover { background: var(--ink); color: var(--bg); }
+
+/* ── Cards ── */
+.k-card {
+  background: var(--card);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  padding: 24px;
+}
+a.k-card { display: block; color: inherit; text-decoration: none; transition: border-color .15s, background .15s; }
+a.k-card:hover { border-color: var(--ink); background: var(--card-hover); color: inherit; }
+
+/* ── Photos and photo placeholders ── */
+.k-photo {
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--card);
+  aspect-ratio: 4 / 3;
+}
+.k-photo img { width: 100%; height: 100%; object-fit: cover; }
+.k-photo.k-placeholder {
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  border: 1px dashed var(--muted);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 16px;
+}
+
+/* Text still to be written. Bright on purpose so nothing ships by accident. */
+mark.todo, .todo {
+  background: transparent;
+  color: var(--accent-text);
+  border: 1px dashed var(--accent);
+  border-radius: 4px;
+  padding: 0 4px;
+}
+
+/* ── Shared top bar (k1kfx.js fills <header data-k1kfx-nav>) ── */
+.k-nav { border-bottom: 1px solid var(--line); }
+.k-nav .k-wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; padding-top: 16px; padding-bottom: 16px; }
+.k-nav-home { font-family: var(--font-display); font-size: 20px; letter-spacing: -0.02em; color: var(--ink); text-decoration: none; }
+.k-nav ul { list-style: none; display: flex; flex-wrap: wrap; gap: 4px 22px; font-size: 15px; font-weight: 500; }
+.k-nav ul a { color: var(--muted); text-decoration: none; }
+.k-nav ul a:hover, .k-nav ul a[aria-current] { color: var(--ink); }
+.k-nav ul a[aria-current]::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-right: 6px; vertical-align: 2px; }
+
+/* ── Shared footer (k1kfx.js fills <footer data-k1kfx-footer>) ── */
+.k-footer { border-top: 1px solid var(--line); padding: 48px 0 56px; font-size: 15px; color: var(--muted); }
+.k-footer .k-wrap { display: grid; gap: 28px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+.k-footer h4 { font-family: var(--font-mono); font-weight: 500; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink); margin-bottom: 10px; }
+.k-footer ul { list-style: none; display: grid; gap: 6px; }
+.k-footer a { color: var(--muted); text-decoration: none; }
+.k-footer a:hover { color: var(--ink); }
+.k-footer .k-extra { grid-column: 1 / -1; font-size: 13px; }
+.k-footer .k-extra a { text-decoration: underline; }
