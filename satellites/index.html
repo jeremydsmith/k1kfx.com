@@ -1,26 +1,16 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" href="data:," />
-    <meta name="description" content="Plan family radio-club events around multiple FM amateur-radio satellite passes." />
-    <title>Satellite Pass Planner</title>
-    <script>
-      // If the app's own script or stylesheet fails to load (usually a cached copy of this page opened right after an update
-      // removed the old files), say so instead of leaving a blank page.
-      window.addEventListener('error', function (e) {
-        var t = e.target;
-        if (t && (t.tagName === 'SCRIPT' || t.tagName === 'LINK')) {
-          var root = document.getElementById('root');
-          if (root && !root.firstChild) root.textContent = 'The planner could not be loaded. It was probably just updated: reload the page (Ctrl+F5 if it still fails).';
-        }
-      }, true);
-    </script>
-    <script type="module" crossorigin src="/satellites/assets/index-TU4Fqozf.js"></script>
-    <link rel="stylesheet" crossorigin href="/satellites/assets/index-DR7dZ4yN.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Satellite Pass Planner has moved</title>
+  <!-- The planner moved to sats.k1kfx.com/planner/. Kept so old links and calendar entries still work. -->
+  <meta name="robots" content="noindex">
+  <link rel="canonical" href="https://sats.k1kfx.com/planner/">
+  <meta http-equiv="refresh" content="0; url=https://sats.k1kfx.com/planner/">
+  <script>location.replace('https://sats.k1kfx.com/planner/' + location.search + location.hash);</script>
+</head>
+<body>
+  <p>The Satellite Pass Planner has moved to <a href="https://sats.k1kfx.com/planner/">sats.k1kfx.com/planner</a>.</p>
+</body>
 </html>

@@ -13,10 +13,11 @@
   var K = {
     links: {
       home: { label: "K1KFX", url: "https://k1kfx.com/" },
-      // Interim addresses for sats and hunt. Final targets: sats.k1kfx.com, hunt.k1kfx.com
+      // Interim address for hunt. Final target: hunt.k1kfx.com
       pota: { label: "Parks on the Air", url: "https://pota.k1kfx.com/" },
       parks: { label: "Rare Parks Finder", url: "https://pota.k1kfx.com/parks/" },
-      sats: { label: "Satellites", url: "https://k1kfx.com/satellites/" },
+      sats: { label: "Satellites", url: "https://sats.k1kfx.com/" },
+      planner: { label: "Satellite Pass Planner", url: "https://sats.k1kfx.com/planner/" },
       hunt: { label: "Fox Hunting", url: "https://k1kfx.com/fox/" },
       qrz:  { label: "QRZ", url: "https://www.qrz.com/db/K1KFX" },
       sc:   { label: "Smith Counseling", url: "https://smithcounseling.org/" },
