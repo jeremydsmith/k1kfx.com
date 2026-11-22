@@ -18,6 +18,7 @@
       sats: { label: "Satellites", url: "https://sats.k1kfx.com/" },
       planner: { label: "Satellite Pass Planner", url: "https://sats.k1kfx.com/planner/" },
       hunt: { label: "Fox Hunting", url: "https://hunt.k1kfx.com/" },
+      foxpursuit: { label: "Fox Pursuit", url: "https://hunt.k1kfx.com/foxpursuit/dashboard.html" },
       qrz:  { label: "QRZ", url: "https://www.qrz.com/db/K1KFX" },
       sc:   { label: "Smith Counseling", url: "https://smithcounseling.org/" },
       mrc:  { label: "Marriage Recovery Course", url: "https://www.marriagerecoverycourse.com/" }
