@@ -1,37 +1,15 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="apple-mobile-web-app-title" content="Fox Pursuit"/>
-  <title>Fox Pursuit — Contact</title>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
-  <link rel="manifest" href="manifest.webmanifest"/>
-  <link rel="apple-touch-icon" href="apple-touch-icon.png"/>
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;500;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="foxhunt.css"/>
-  <script src="0-config-foxhunt.js"></script>
-  <script src="foxhunt-theme.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fox Pursuit has moved</title>
+  <!-- Fox Pursuit moved to hunt.k1kfx.com/foxpursuit/. Kept so old links and home-screen icons still work. -->
+  <meta name="robots" content="noindex">
+  <meta http-equiv="refresh" content="0; url=https://hunt.k1kfx.com/foxpursuit/contact.html">
+  <script>location.replace('https://hunt.k1kfx.com/foxpursuit/contact.html' + location.search + location.hash);</script>
 </head>
-<body class="grid-bg">
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script src="0-config-firebase.js"></script>
-<script src="foxhunt.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    insertNav(true); insertFooter();
-    fhOptionalAuth();
-    renderContentBlocks('contact-content', (typeof FOXHUNT_CONFIG !== 'undefined' ? FOXHUNT_CONFIG.contact : []));
-  });
-</script>
-
-<div class="page-wrap">
-  <h1 class="page-title">Contact</h1>
-
-  <!-- Content is built from the "contact" blocks in 0-config-foxhunt.js -->
-  <div id="contact-content"></div>
-</div>
+<body>
+  <p>Fox Pursuit has moved to <a href="https://hunt.k1kfx.com/foxpursuit/contact.html">hunt.k1kfx.com</a>. Sign in there once, and re-add the home-screen icon if you use one.</p>
 </body>
 </html>

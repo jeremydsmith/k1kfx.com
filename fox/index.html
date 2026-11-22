@@ -3,118 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>K1KFX · Fox Hunts</title>
-  <meta name="description" content="K1KFX amateur radio fox hunts in Lincoln, Nebraska. How to record your bearings with Fox Pursuit.">
-  <!-- Interim home of the fox hunt page. It moves to hunt.k1kfx.com later. -->
-  <link rel="stylesheet" href="/kit/k1kfx.css">
-  <script src="/kit/k1kfx.js" defer></script>
-  <style>
-    .hero { text-align: center; padding: 56px 0 44px; display: grid; justify-items: center; gap: 20px; }
-    .hero h1 { font-size: clamp(48px, 13vw, 104px); }
-    h2 .num { color: var(--accent-text); margin-right: 10px; }
-    main .k-section { padding: 40px 0; }
-
-    ol.steps { list-style: none; counter-reset: step; display: grid; gap: 12px; }
-    ol.steps li {
-      counter-increment: step; position: relative;
-      padding: 14px 16px 14px 60px;
-      background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
-    }
-    ol.steps li::before {
-      content: counter(step); position: absolute; left: 16px; top: 12px;
-      width: 30px; height: 30px; border-radius: 50%;
-      background: var(--accent); color: var(--accent-ink);
-      font-family: var(--font-display); font-size: 15px;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .buddy { margin-top: 20px; padding: 16px; border: 2px dashed var(--accent); border-radius: var(--radius); color: var(--muted); }
-    .buddy b { display: block; color: var(--accent-text); font-family: var(--font-display); font-weight: normal; text-transform: uppercase; margin-bottom: 4px; }
-
-    ul.tips { list-style: none; display: grid; gap: 12px; color: var(--muted); }
-    ul.tips li { padding-left: 22px; position: relative; }
-    ul.tips li::before { content: ""; position: absolute; left: 0; top: .6em; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); }
-    ul.tips strong { color: var(--ink); }
-    code { font-family: var(--font-mono); background: var(--card); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px; color: var(--ink); }
-
-    .video { margin-top: 24px; }
-    .video h3 { font-family: var(--font-body); font-weight: 600; font-size: 16px; margin-bottom: 4px; }
-    .video p { font-size: 14px; color: var(--muted); margin-bottom: 10px; }
-    .frame { position: relative; aspect-ratio: 16 / 9; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--card); }
-    .frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-
-    .btn-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; }
-    @media (max-width: 480px) { .btn-row .k-btn { width: 100%; text-align: center; } }
-  </style>
+  <title>Fox Hunting has moved</title>
+  <meta name="robots" content="noindex">
+  <link rel="canonical" href="https://hunt.k1kfx.com/">
+  <meta http-equiv="refresh" content="0; url=https://hunt.k1kfx.com/">
+  <script>location.replace('https://hunt.k1kfx.com/' + location.hash);</script>
 </head>
 <body>
-  <header data-k1kfx-nav data-current="hunt"></header>
-
-  <div class="k-wrap k-narrow">
-    <div class="hero">
-      <div class="k-tag">Fox Hunts · Lincoln, NE</div>
-      <h1 class="k-display">Fox Hunt</h1>
-      <a class="k-btn k-btn-primary" href="/hunt/dashboard.html">Start Hunting →</a>
-    </div>
-
-    <main>
-      <section class="k-section" aria-labelledby="how">
-        <h2 id="how"><span class="num">1</span>Kickoff</h2>
-        <p class="k-muted">Fox frequencies are revealed on K0KKV at the starting time. Log your bearings in the app and radio them to net control.</p>
-      </section>
-
-      <section class="k-section" aria-labelledby="steps">
-        <h2 id="steps"><span class="num">2</span>How to Hunt</h2>
-        <ol class="steps">
-          <li><strong>Start Hunting</strong> → sign in → <strong>Create Hunt</strong>.</li>
-          <li>Turn on <strong>tracking</strong> (GPS + compass).</li>
-          <li>Point at the signal, tap <strong>Submit</strong>.</li>
-          <li>Radio your location and bearing to net control.</li>
-          <li>Found it? <strong>Close the hunt</strong>, start a new one.</li>
-        </ol>
-        <div class="buddy">
-          <b>Optional: buddy up</b>
-          One hunt, you both join it, one shared map.
-        </div>
-      </section>
-
-      <section class="k-section" aria-labelledby="tips">
-        <h2 id="tips"><span class="num">3</span>Tips</h2>
-        <ul class="tips">
-          <li><strong>Name your hunt</strong> call + fox#: <code>K1KFX-1</code></li>
-          <li><strong>8 or fewer</strong> good bearings for best results.</li>
-          <li><strong>Figure-8</strong> the phone to calibrate compass.</li>
-          <li><strong>Offline map:</strong> Download on Wi-Fi before leaving.</li>
-        </ul>
-      </section>
-
-      <section class="k-section" aria-labelledby="videos">
-        <h2 id="videos"><span class="num">4</span>Videos</h2>
-        <div class="video">
-          <h3>Fox Pursuit overview</h3>
-          <div class="frame">
-            <iframe src="https://www.youtube-nocookie.com/embed/AtWXc-IGKhY" title="Fox Pursuit overview" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>
-          </div>
-        </div>
-        <div class="video">
-          <h3>iPhone setup</h3>
-          <p>iPhone only. Skip activation.</p>
-          <div class="frame">
-            <iframe src="https://www.youtube-nocookie.com/embed/puCFdVMl8XE?start=3" title="Fox Pursuit iPhone setup" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>
-          </div>
-        </div>
-      </section>
-
-      <section class="k-section">
-        <div class="btn-row">
-          <a class="k-btn k-btn-secondary" href="/hunt/instructions.html">Full Instructions</a>
-          <a class="k-btn k-btn-primary" href="/hunt/dashboard.html">Start Hunting →</a>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <footer data-k1kfx-footer>
-    <a href="https://foxpursuit.com">Fox Pursuit</a> was created by Drew Lindsay, <a href="https://www.qrz.com/db/WA0MCS">WA0MCS</a>.
-  </footer>
+  <p>Fox Hunting has moved to <a href="https://hunt.k1kfx.com/">hunt.k1kfx.com</a>.</p>
 </body>
 </html>
