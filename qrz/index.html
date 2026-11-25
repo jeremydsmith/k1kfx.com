@@ -282,7 +282,8 @@
           var head = t.slice(0, 400).trim();
           if (head.indexOf("<?xml") === 0 || head.indexOf("<QRZDatabase") >= 0) {
             var s = parse(t).s;
-            throw QRZError(s.Error || "Biography not available", !s.Key);
+            // A valid session and no error means QRZ has no bio on file for this call.
+            throw QRZError(s.Error || (s.Key ? "nobio" : "Biography not available"), !s.Key);
           }
           return t;
         });
@@ -433,11 +434,16 @@
       }, function (e) {
         if (current !== call) return;
         var s = getSess() || {}, sub = s.sub || "";
-        var note = /non-subscriber/i.test(sub)
+        var nonSub = /non-subscriber/i.test(sub);
+        if (!nonSub && (e.message === "nobio" || /not found/i.test(e.message))) {
+          $("#bioBox").innerHTML = '<div class="msg">' + esc(cs) + " hasn't posted a biography on QRZ.</div>";
+          return;
+        }
+        var note = nonSub
           ? "QRZ reports this login as a non-subscriber. Bios need a QRZ XML Logbook Data subscription."
           : sub ? "QRZ subscription on this login: " + sub + "." : "QRZ didn't report a subscription on this login.";
-        $("#bioBox").innerHTML = '<div class="msg">' + (/not found/i.test(e.message) ? "No biography posted." : "Biography unavailable. QRZ says: " + esc(e.message)) +
-          '<br><small>' + esc(note) + "</small></div>";
+        $("#bioBox").innerHTML = '<div class="msg">Biography unavailable' +
+          (e.message === "nobio" ? "." : ". QRZ says: " + esc(e.message)) + "<br><small>" + esc(note) + "</small></div>";
       });
     }
   }
