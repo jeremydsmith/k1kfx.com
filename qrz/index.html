@@ -9,9 +9,11 @@
 <meta name="theme-color" content="#0b0b0c" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Lookup">
+<meta name="apple-mobile-web-app-title" content="QRZ">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="icon" href="icon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="icon-180.png">
 <link rel="stylesheet" href="https://k1kfx.com/kit/k1kfx.css">
 <style>
   body { font-size: 18px; line-height: 1.5; }
@@ -74,7 +76,6 @@
   .dist { margin-top: 8px; font-size: 17px; }
   .dist b { font-weight: 600; }
   .dist b::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin-right: 8px; vertical-align: 2px; }
-  .dist .km { color: var(--muted); margin-left: 6px; }
   .more { border-top: 1px solid var(--line); }
   .more > summary {
     list-style: none; cursor: pointer; padding: 12px 22px; min-height: 48px;
@@ -392,7 +393,7 @@
     if (home && there) {
       var d = distBearing(home, there);
       if (d.km > 1) dist = "<b>" + Math.round(d.mi).toLocaleString() + " mi</b> " + Math.round(d.brg) + "° " +
-        COMPASS[Math.round(d.brg / 22.5) % 16] + ' <span class="km">' + Math.round(d.km).toLocaleString() + " km</span>";
+        COMPASS[Math.round(d.brg / 22.5) % 16];
     }
 
     var badges = [
