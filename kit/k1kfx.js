@@ -19,7 +19,8 @@
       planner: { label: "Satellite Pass Planner", url: "https://sats.k1kfx.com/planner/" },
       hunt: { label: "Fox Hunting", url: "https://hunt.k1kfx.com/" },
       foxpursuit: { label: "Fox Pursuit", url: "https://hunt.k1kfx.com/foxpursuit/dashboard.html" },
-      qrz:  { label: "QRZ", url: "https://www.qrz.com/db/K1KFX" },
+      lookup: { label: "QRZ Lookup", nav: "QRZ", url: "https://k1kfx.com/qrz/" },
+      qrz:  { label: "K1KFX on QRZ", url: "https://www.qrz.com/db/K1KFX" },
       sc:   { label: "Smith Counseling", url: "https://smithcounseling.org/" },
       mrc:  { label: "Marriage Recovery Course", url: "https://www.marriagerecoverycourse.com/" }
     }
@@ -31,13 +32,14 @@
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
     });
   }
-  function a(key, current) {
-    var l = K.links[key];
-    if (!l.url) return '<span class="todo">' + esc(l.label) + "</span>";
-    return '<a href="' + esc(l.url) + '"' + (key === current ? ' aria-current="page"' : "") + ">" + esc(l.label) + "</a>";
+  // inNav: use the link's short "nav" label (if it has one) in the top bar
+  function a(key, current, inNav) {
+    var l = K.links[key], label = (inNav && l.nav) || l.label;
+    if (!l.url) return '<span class="todo">' + esc(label) + "</span>";
+    return '<a href="' + esc(l.url) + '"' + (key === current ? ' aria-current="page"' : "") + ">" + esc(label) + "</a>";
   }
-  function li(keys, current) {
-    return keys.map(function (k) { return "<li>" + a(k, current) + "</li>"; }).join("");
+  function li(keys, current, inNav) {
+    return keys.map(function (k) { return "<li>" + a(k, current, inNav) + "</li>"; }).join("");
   }
 
   function render() {
@@ -52,7 +54,7 @@
       el.innerHTML =
         '<div class="k-wrap">' +
         '<a class="k-nav-home" href="' + esc(K.links.home.url) + '">K1KFX</a>' +
-        '<nav aria-label="K1KFX sites"><ul>' + li(["pota", "sats", "hunt"], cur) + "</ul></nav>" +
+        '<nav aria-label="K1KFX sites"><ul>' + li(["pota", "sats", "hunt", "lookup"], cur, true) + "</ul></nav>" +
         "</div>";
     });
 
@@ -62,7 +64,7 @@
       el.innerHTML =
         '<div class="k-wrap">' +
         "<div><h4>K1KFX</h4><ul>" + li(["home", "qrz"]) + "<li>Lincoln, Nebraska</li></ul></div>" +
-        "<div><h4>On the air</h4><ul>" + li(["pota", "sats", "hunt"]) + "</ul></div>" +
+        "<div><h4>On the air</h4><ul>" + li(["pota", "sats", "hunt", "lookup"]) + "</ul></div>" +
         "<div><h4>At work</h4><ul>" + li(["sc", "mrc"]) + "</ul></div>" +
         (extra ? '<div class="k-extra">' + extra + "</div>" : "") +
         "</div>";
