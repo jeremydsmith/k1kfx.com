@@ -213,7 +213,10 @@
   // ── QRZ XML service (it allows browser calls directly) ──
   function QRZError(msg, session) { var e = new Error(msg); e.session = !!session; return e; }
   function get(params) {
-    var u = QRZ + "?" + new URLSearchParams(params).toString();
+    // QRZ's spec separates parameters with ";" (values are encoded, so no stray ";").
+    var u = QRZ + "?" + Object.keys(params).map(function (k) {
+      return k + "=" + encodeURIComponent(params[k]);
+    }).join(";");
     return fetch(u, { credentials: "omit", referrerPolicy: "no-referrer" }).then(function (r) {
       if (!r.ok) throw QRZError("QRZ answered " + r.status);
       return r.text();
@@ -279,8 +282,9 @@
     return cached("bio:" + call, function () {
       return withSession(function (key) {
         return get({ s: key, html: call }).then(function (t) {
-          var head = t.slice(0, 400).trim();
-          if (head.indexOf("<?xml") === 0 || head.indexOf("<QRZDatabase") >= 0) {
+          // The bio comes back as HTML (which may itself start with "<?xml").
+          // Only QRZ's own <QRZDatabase> wrapper means "no bio" or an error.
+          if (/<QRZDatabase[\s>]/.test(t.slice(0, 600)) && !/<(html|body)[\s>]/i.test(t.slice(0, 2000))) {
             var s = parse(t).s;
             // A valid session and no error means QRZ has no bio on file for this call.
             throw QRZError(s.Error || (s.Key ? "nobio" : "Biography not available"), !s.Key);
