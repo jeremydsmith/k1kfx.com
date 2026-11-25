@@ -58,7 +58,6 @@ strong { font-weight: 600; }
 
 .k-wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 16px; }
 @media (min-width: 760px) { .k-wrap { padding: 0 40px; } }
-.k-narrow { max-width: 760px; }
 
 /* ── Type ── */
 .k-tag {
@@ -107,7 +106,7 @@ p + p { margin-top: 1em; }
 a.k-card { display: block; color: inherit; text-decoration: none; transition: border-color .15s, background .15s; }
 a.k-card:hover { border-color: var(--ink); background: var(--card-hover); color: inherit; }
 
-/* ── Photos and photo placeholders ── */
+/* ── Photos ── */
 .k-photo {
   border-radius: var(--radius);
   overflow: hidden;
@@ -115,14 +114,6 @@ a.k-card:hover { border-color: var(--ink); background: var(--card-hover); color:
   aspect-ratio: 4 / 3;
 }
 .k-photo img { width: 100%; height: 100%; object-fit: cover; }
-.k-photo.k-placeholder {
-  display: flex; align-items: center; justify-content: center; text-align: center;
-  border: 1px dashed var(--muted);
-  color: var(--muted);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  padding: 16px;
-}
 
 /* Text still to be written. Bright on purpose so nothing ships by accident. */
 mark.todo, .todo {
