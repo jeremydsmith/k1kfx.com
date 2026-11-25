@@ -266,7 +266,8 @@
     return cached("rec:" + call, function () {
       return withSession(function (key) {
         return get({ s: key, callsign: call }).then(function (t) {
-          var p = parse(t);
+          var p = parse(t), s0 = getSess();
+          if (s0 && p.s.SubExp && s0.sub !== p.s.SubExp) { s0.sub = p.s.SubExp; setSess(s0); }
           if (p.rec) return p.rec;
           var err = p.s.Error || "No record returned";
           throw QRZError(err, !p.s.Key && !/not found/i.test(err));
@@ -382,8 +383,6 @@
     var qrzPage = "https://www.qrz.com/db/" + encodeURIComponent(cs);
     var photo = r.image ? '<img class="photo" src="' + esc(r.image) + '" alt="Photo of ' + esc(cs) + '" referrerpolicy="no-referrer">' : "";
     var url = safeUrl(r.url);
-    var sess = getSess() || {};
-    var subscriber = sess.sub && !/non-subscriber/i.test(sess.sub);
 
     out.innerHTML =
       '<div class="card">' +
@@ -412,10 +411,7 @@
       "</div>" +
       '<div class="card">' +
         '<div class="biohead"><h3>Biography</h3><a href="' + qrzPage + '" target="_blank" rel="noopener">Open on QRZ ↗</a></div>' +
-        '<div id="bioBox">' + (r.bio && r.bio !== "0"
-          ? '<div class="msg">Loading biography…</div>'
-          : '<div class="msg">' + (subscriber ? "No biography posted." : "No biography returned. QRZ only sends bios to XML subscribers.") + "</div>") +
-        "</div>" +
+        '<div id="bioBox"><div class="msg">Loading biography…</div></div>' +
       "</div>";
 
     var ph = out.querySelector(".photo");
@@ -423,7 +419,9 @@
       ph.onerror = function () { ph.remove(); out.querySelector(".top").classList.add("nophoto"); };
       ph.onclick = function () { $("#lightbox img").src = ph.src; $("#lightbox").style.display = "flex"; };
     }
-    if (r.bio && r.bio !== "0") {
+    // Always ask QRZ for the bio (the record's "bio" field isn't reliable), and if it
+    // says no, show QRZ's own words plus the account's subscription status.
+    {
       lookupBio(cs).then(function (html) {
         if (current !== call) return;
         var f = document.createElement("iframe");
@@ -434,7 +432,12 @@
         var box = $("#bioBox"); box.innerHTML = ""; box.appendChild(f);
       }, function (e) {
         if (current !== call) return;
-        $("#bioBox").innerHTML = '<div class="msg">Biography unavailable: ' + esc(e.message) + "</div>";
+        var s = getSess() || {}, sub = s.sub || "";
+        var note = /non-subscriber/i.test(sub)
+          ? "QRZ reports this login as a non-subscriber. Bios need a QRZ XML Logbook Data subscription."
+          : sub ? "QRZ subscription on this login: " + sub + "." : "QRZ didn't report a subscription on this login.";
+        $("#bioBox").innerHTML = '<div class="msg">' + (/not found/i.test(e.message) ? "No biography posted." : "Biography unavailable. QRZ says: " + esc(e.message)) +
+          '<br><small>' + esc(note) + "</small></div>";
       });
     }
   }
