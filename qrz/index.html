@@ -65,13 +65,28 @@
   .msg p { max-width: 520px; margin: 0 auto 20px; }
   .msg .k-btn { border: 0; cursor: pointer; }
 
-  .top { display: grid; grid-template-columns: auto 1fr; gap: 22px; padding: 22px; align-items: center; }
+  .top { display: grid; grid-template-columns: auto 1fr; gap: 20px; padding: 20px 22px; align-items: center; }
   .top.nophoto { grid-template-columns: 1fr; }
-  .photo { width: 168px; height: 168px; border-radius: 12px; object-fit: cover; background: var(--line); cursor: zoom-in; }
+  .photo { width: 128px; height: 128px; border-radius: 12px; object-fit: cover; background: var(--line); cursor: zoom-in; }
   .callsign { font-family: var(--font-display); font-size: clamp(40px, 7vw, 64px); line-height: .9; letter-spacing: -0.02em; }
   .name { font-family: var(--font-serif); font-style: italic; font-size: clamp(26px, 4vw, 36px); line-height: 1.1; margin-top: 8px; }
   .loc { color: var(--muted); margin-top: 4px; }
-  .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .dist { margin-top: 8px; font-size: 17px; }
+  .dist b { font-weight: 600; }
+  .dist b::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin-right: 8px; vertical-align: 2px; }
+  .dist .km { color: var(--muted); margin-left: 6px; }
+  .more { border-top: 1px solid var(--line); }
+  .more > summary {
+    list-style: none; cursor: pointer; padding: 12px 22px; min-height: 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    font: 500 12px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted);
+  }
+  .more > summary::-webkit-details-marker { display: none; }
+  .more > summary::after { content: "+"; font: 400 24px/1 var(--font-body); color: var(--ink); }
+  .more[open] > summary::after { content: "−"; }
+  .more > summary:hover { color: var(--ink); }
+  .more .badges { padding: 0 22px 14px; }
+  .badges { display: flex; flex-wrap: wrap; gap: 6px; }
   .badge { font: 500 12px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; padding: 5px 10px; border-radius: 999px; background: var(--bg); }
   .badge.hot { background: var(--accent); color: var(--accent-ink); }
 
@@ -79,7 +94,6 @@
   dl div { padding: 12px 22px; border-bottom: 1px solid var(--line); }
   dt { font: 500 11px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
   dd { margin-top: 3px; overflow-wrap: anywhere; }
-  dd .big { font-size: 22px; font-weight: 600; }
 
   .biohead { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 22px; }
   .biohead h3 { margin: 0; font-size: 22px; }
@@ -125,8 +139,9 @@
     #call { font-size: 22px; padding: 12px 16px; }
     #go { padding: 0 20px; }
     .round { width: 50px; height: 50px; }
-    .top { grid-template-columns: 1fr; padding: 18px; }
-    .photo { width: 100%; height: auto; max-height: 60vh; object-fit: contain; }
+    .top { gap: 14px; padding: 16px 18px; }
+    .photo { width: 88px; height: 88px; }
+    .more > summary, .more .badges { padding-left: 18px; padding-right: 18px; }
     dl div, .biohead { padding-left: 18px; padding-right: 18px; }
   }
 </style>
@@ -194,7 +209,7 @@
   }
 
   // ── storage: "remember me" uses localStorage, otherwise this tab only ──
-  var K = { creds: "k1kfxQrzCreds", sess: "k1kfxQrzSession", grid: "k1kfxQrzGrid", recent: "k1kfxQrzRecent" };
+  var K = { creds: "k1kfxQrzCreds", sess: "k1kfxQrzSession", grid: "k1kfxQrzGrid", recent: "k1kfxQrzRecent", more: "k1kfxQrzMoreOpen" };
   function read(store, k) { try { return JSON.parse(store.getItem(k)); } catch (e) { return null; } }
   function write(store, k, v) { try { v == null ? store.removeItem(k) : store.setItem(k, JSON.stringify(v)); } catch (e) {} }
   function getCreds() { return read(localStorage, K.creds) || read(sessionStorage, K.creds); }
@@ -367,7 +382,8 @@
     document.title = cs + " · Callsign Lookup";
 
     var name = r.name_fmt || [r.fname, r.nickname ? "“" + r.nickname + "”" : "", r.name].filter(Boolean).join(" ");
-    var loc = [r.addr2, r.state, r.country].filter(Boolean).join(", ");
+    var usa = /^(united states|usa)$/i.test(r.country || "");
+    var loc = [r.addr2, r.state, usa ? "" : r.country].filter(Boolean).join(", ");
     var addr = [r.attn, r.addr1, [r.addr2, r.state, r.zip].filter(Boolean).join(" "), r.country].filter(Boolean).map(esc).join("<br>");
 
     var grid = getGrid(), dist = "";
@@ -375,8 +391,8 @@
     var there = (r.lat && r.lon) ? [+r.lat, +r.lon] : gridToLatLon(r.grid);
     if (home && there) {
       var d = distBearing(home, there);
-      if (d.km > 1) dist = '<span class="big">' + Math.round(d.mi).toLocaleString() + " mi</span><br>" +
-        Math.round(d.km).toLocaleString() + " km · " + Math.round(d.brg) + "° " + COMPASS[Math.round(d.brg / 22.5) % 16];
+      if (d.km > 1) dist = "<b>" + Math.round(d.mi).toLocaleString() + " mi</b> " + Math.round(d.brg) + "° " +
+        COMPASS[Math.round(d.brg / 22.5) % 16] + ' <span class="km">' + Math.round(d.km).toLocaleString() + " km</span>";
     }
 
     var badges = [
@@ -396,12 +412,13 @@
             '<div class="callsign">' + esc(cs) + "</div>" +
             (name ? '<div class="name">' + esc(name) + "</div>" : "") +
             (loc ? '<div class="loc">' + esc(loc) + "</div>" : "") +
-            '<div class="badges">' + badges + "</div>" +
+            (dist ? '<div class="dist" title="From ' + esc(grid.toUpperCase()) + '">' + dist + "</div>" : "") +
           "</div>" +
         "</div>" +
+        '<details class="more"' + (read(localStorage, K.more) ? " open" : "") + "><summary>More details</summary>" +
+        (badges ? '<div class="badges">' + badges + "</div>" : "") +
         "<dl>" +
           row("Grid", esc(r.grid)) +
-          row(grid ? "Distance from " + grid.toUpperCase() : "", dist) +
           row("County", esc(r.county)) +
           row("Mailing address", addr) +
           row("Email", r.email ? '<a href="mailto:' + esc(r.email) + '">' + esc(r.email) + "</a>" : "") +
@@ -412,13 +429,14 @@
           row("Born", esc(r.born)) +
           row("Time zone", esc(r.TimeZone)) +
           row("QRZ views", r.u_views ? (+r.u_views).toLocaleString() : "") +
-        "</dl>" +
+        "</dl></details>" +
       "</div>" +
       '<div class="card">' +
         '<div class="biohead"><h3>Biography</h3><a href="' + qrzPage + '" target="_blank" rel="noopener">Open on QRZ ↗</a></div>' +
         '<div id="bioBox"><div class="msg">Loading biography…</div></div>' +
       "</div>";
 
+    out.querySelector(".more").addEventListener("toggle", function (e) { write(localStorage, K.more, e.target.open || null); });
     var ph = out.querySelector(".photo");
     if (ph) {
       ph.onerror = function () { ph.remove(); out.querySelector(".top").classList.add("nophoto"); };
