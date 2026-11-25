@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Callsign Lookup · K1KFX</title>
+<meta name="description" content="A clean, ad-free callsign lookup using your own QRZ.com account.">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0b0c" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Lookup">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://k1kfx.com/kit/k1kfx.css">
+<style>
+  body { font-size: 18px; line-height: 1.5; }
+  button { font: inherit; color: inherit; }
+
+  /* ── Search bar ── */
+  header {
+    position: sticky; top: 0; z-index: 5; background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    padding: max(12px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) 10px max(14px, env(safe-area-inset-left));
+  }
+  .bar { display: flex; gap: 10px; max-width: 1000px; margin: 0 auto; align-items: center; }
+  #f { flex: 1; min-width: 0; display: flex; gap: 10px; }
+  #call {
+    flex: 1; min-width: 0;
+    font: 500 26px/1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase;
+    padding: 14px 18px; border-radius: 999px; border: 2px solid var(--line);
+    background: var(--card); color: var(--ink); outline: none;
+  }
+  #call::placeholder { color: var(--muted); letter-spacing: .02em; text-transform: none; font-family: var(--font-body); font-size: 20px; }
+  #call:focus { border-color: var(--accent); background: var(--bg); }
+  #go {
+    flex: none; padding: 0 28px; border: 0; border-radius: 999px; cursor: pointer;
+    background: var(--accent); color: var(--accent-ink); font-weight: 600; font-size: 19px;
+  }
+  #go:active, .round:active { transform: scale(.95); }
+  .round {
+    flex: none; width: 56px; height: 56px; border-radius: 50%; border: 0; cursor: pointer;
+    background: var(--ink); color: var(--bg); display: grid; place-items: center;
+  }
+  .round svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; }
+
+  #recent { display: flex; gap: 8px; overflow-x: auto; max-width: 1000px; margin: 10px auto 0; scrollbar-width: none; }
+  #recent:empty { display: none; }
+  #recent::-webkit-scrollbar { display: none; }
+  #recent button {
+    flex: none; font: 500 15px var(--font-mono); letter-spacing: .04em;
+    padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line);
+    background: var(--bg); color: var(--ink); cursor: pointer;
+  }
+  #recent button[aria-current] { border-color: var(--ink); }
+
+  /* ── Results ── */
+  main { max-width: 1000px; margin: 0 auto; padding: 18px max(14px, env(safe-area-inset-right)) 80px max(14px, env(safe-area-inset-left)); }
+  .card { background: var(--card); border-radius: var(--radius); overflow: hidden; }
+  .card + .card { margin-top: 16px; }
+  .msg { padding: 56px 24px; text-align: center; color: var(--muted); }
+  .msg.err { color: var(--accent-text); }
+  .msg h2 { color: var(--ink); font-size: clamp(30px, 5vw, 44px); margin-bottom: 12px; }
+  .msg h2 .k-serif { color: var(--accent-text); }
+  .msg p { max-width: 520px; margin: 0 auto 20px; }
+  .msg .k-btn { border: 0; cursor: pointer; }
+
+  .top { display: grid; grid-template-columns: auto 1fr; gap: 22px; padding: 22px; align-items: center; }
+  .top.nophoto { grid-template-columns: 1fr; }
+  .photo { width: 168px; height: 168px; border-radius: 12px; object-fit: cover; background: var(--line); cursor: zoom-in; }
+  .callsign { font-family: var(--font-display); font-size: clamp(40px, 7vw, 64px); line-height: .9; letter-spacing: -0.02em; }
+  .name { font-family: var(--font-serif); font-style: italic; font-size: clamp(26px, 4vw, 36px); line-height: 1.1; margin-top: 8px; }
+  .loc { color: var(--muted); margin-top: 4px; }
+  .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .badge { font: 500 12px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; padding: 5px 10px; border-radius: 999px; background: var(--bg); }
+  .badge.hot { background: var(--accent); color: var(--accent-ink); }
+
+  dl { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); border-top: 1px solid var(--line); }
+  dl div { padding: 12px 22px; border-bottom: 1px solid var(--line); }
+  dt { font: 500 11px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  dd { margin-top: 3px; overflow-wrap: anywhere; }
+  dd .big { font-size: 22px; font-weight: 600; }
+
+  .biohead { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 22px; }
+  .biohead h3 { margin: 0; font-size: 22px; }
+  .biohead a { font-weight: 600; font-size: 16px; }
+  #bio { display: block; width: 100%; border: 0; min-height: 160px; background: #fff; }
+
+  #lightbox { position: fixed; inset: 0; background: rgba(0,0,0,.9); display: none; align-items: center; justify-content: center; z-index: 20; cursor: zoom-out; }
+  #lightbox img { max-width: 96vw; max-height: 94vh; border-radius: 8px; }
+
+  /* ── Sheets (menu, sign in) ── */
+  .sheet {
+    margin: auto; border: 0; border-radius: 22px; padding: 26px;
+    width: min(440px, calc(100% - 32px)); background: var(--bg); color: var(--ink);
+    box-shadow: 0 20px 60px rgba(0,0,0,.3);
+  }
+  .sheet::backdrop { background: rgba(0,0,0,.45); }
+  .sheet h2 { font-size: 30px; margin: 0 0 14px; }
+  .sheet .item {
+    display: block; width: 100%; text-align: left; text-decoration: none;
+    background: var(--card); color: var(--ink); border: 0; border-radius: 12px;
+    padding: 12px 18px; margin-bottom: 8px; font-weight: 600; font-size: 19px; cursor: pointer;
+  }
+  .sheet .item:active, .sheet .item:hover { background: var(--card-hover); color: var(--ink); }
+  .sheet .hint { color: var(--muted); font-size: 14px; line-height: 1.45; margin: 8px 0 16px; }
+  .plain { background: transparent; border: 2px solid var(--ink); color: var(--ink); border-radius: 999px; padding: 11px 22px; font-weight: 600; cursor: pointer; }
+  .fill { background: var(--accent); border: 2px solid var(--accent); color: var(--accent-ink); border-radius: 999px; padding: 11px 22px; font-weight: 600; cursor: pointer; }
+  .sheet > .plain { width: 100%; }
+  .row2 { display: flex; gap: 10px; margin-top: 6px; }
+  .row2 button { flex: 1; min-height: 52px; }
+  label { display: block; margin-bottom: 12px; }
+  label > span { display: block; font: 500 11px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .sheet input[type=text], .sheet input[type=password] {
+    width: 100%; font-size: 19px; padding: 11px 14px; border-radius: 12px;
+    border: 2px solid var(--line); background: var(--card); color: var(--ink); outline: none;
+  }
+  .sheet input:focus { border-color: var(--accent); }
+  .check { display: flex; gap: 10px; align-items: center; font-size: 16px; }
+  .check input { width: 22px; height: 22px; accent-color: var(--accent); }
+  #loginStatus { min-height: 1.4em; font-size: 15px; margin: 4px 0 8px; color: var(--muted); }
+  #loginStatus.err { color: var(--accent-text); }
+
+  @media (max-width: 560px) {
+    #call { font-size: 22px; padding: 12px 16px; }
+    #go { padding: 0 20px; }
+    .round { width: 50px; height: 50px; }
+    .top { grid-template-columns: 1fr; padding: 18px; }
+    .photo { width: 100%; height: auto; max-height: 60vh; object-fit: contain; }
+    dl div, .biohead { padding-left: 18px; padding-right: 18px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <form id="f" autocomplete="off">
+      <input id="call" placeholder="Callsign" aria-label="Callsign" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="search">
+      <button id="go" type="submit">Go</button>
+    </form>
+    <button type="button" id="menuBtn" class="round" aria-label="Menu">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+  </div>
+  <div id="recent"></div>
+</header>
+
+<main id="out"></main>
+<div id="lightbox"><img alt=""></div>
+
+<dialog id="menu" class="sheet">
+  <h2>Menu</h2>
+  <button type="button" class="item" data-act="login">QRZ login &amp; home grid</button>
+  <button type="button" class="item" data-act="clear">Clear recent calls</button>
+  <button type="button" class="item" data-act="signout">Sign out</button>
+  <a class="item" href="https://k1kfx.com/">K1KFX home</a>
+  <p class="hint" id="menuHint"></p>
+  <button type="button" class="plain" data-act="close">Close</button>
+</dialog>
+
+<dialog id="login" class="sheet">
+  <form id="loginForm" method="dialog">
+    <h2>QRZ login</h2>
+    <label><span>QRZ username (your callsign)</span>
+      <input type="text" id="lu" name="username" autocomplete="username" autocapitalize="characters" autocorrect="off" spellcheck="false" required></label>
+    <label><span>QRZ password</span>
+      <input type="password" id="lp" name="password" autocomplete="current-password" required></label>
+    <label><span>Your grid square (for distance)</span>
+      <input type="text" id="lg" placeholder="Filled in from your QRZ record" autocapitalize="characters" autocorrect="off" spellcheck="false"></label>
+    <label class="check"><input type="checkbox" id="lr" checked> Remember me on this device</label>
+    <p id="loginStatus" role="status"></p>
+    <div class="row2">
+      <button type="button" class="plain" id="loginCancel">Cancel</button>
+      <button type="submit" class="fill" id="loginGo">Sign in</button>
+    </div>
+    <p class="hint">Your login is kept in this browser and sent only to QRZ.com, never to K1KFX. Bios and full records need a QRZ XML subscription; free accounts get a shorter record.</p>
+  </form>
+</dialog>
+
+<script>
+(function () {
+  "use strict";
+  var QRZ = "https://xmldata.qrz.com/xml/current/";
+  var AGENT = "K1KFX-Lookup/1.0";
+  var CALL_RE = /^[A-Z0-9/]{3,15}$/;
+  var TTL = 15 * 60 * 1000;
+
+  var $ = function (s) { return document.querySelector(s); };
+  var out = $("#out"), input = $("#call");
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  // ── storage: "remember me" uses localStorage, otherwise this tab only ──
+  var K = { creds: "k1kfxQrzCreds", sess: "k1kfxQrzSession", grid: "k1kfxQrzGrid", recent: "k1kfxQrzRecent" };
+  function read(store, k) { try { return JSON.parse(store.getItem(k)); } catch (e) { return null; } }
+  function write(store, k, v) { try { v == null ? store.removeItem(k) : store.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function getCreds() { return read(localStorage, K.creds) || read(sessionStorage, K.creds); }
+  function setCreds(c, remember) {
+    write(localStorage, K.creds, remember ? c : null);
+    write(sessionStorage, K.creds, remember ? null : c);
+  }
+  function getSess() { return read(sessionStorage, K.sess) || read(localStorage, K.sess); }
+  function setSess(s) {
+    var remember = !!read(localStorage, K.creds);
+    write(localStorage, K.sess, remember ? s : null);
+    write(sessionStorage, K.sess, remember ? null : s);
+  }
+  function getGrid() { return read(localStorage, K.grid) || ""; }
+
+  // ── QRZ XML service (it allows browser calls directly) ──
+  function QRZError(msg, session) { var e = new Error(msg); e.session = !!session; return e; }
+  function get(params) {
+    var u = QRZ + "?" + new URLSearchParams(params).toString();
+    return fetch(u, { credentials: "omit", referrerPolicy: "no-referrer" }).then(function (r) {
+      if (!r.ok) throw QRZError("QRZ answered " + r.status);
+      return r.text();
+    }, function () { throw QRZError("Couldn't reach QRZ. Check the internet connection."); });
+  }
+  function parse(text) {
+    var doc = new DOMParser().parseFromString(text, "application/xml");
+    function kids(name) {
+      var el = doc.getElementsByTagNameNS("*", name)[0], o = {};
+      if (!el) return null;
+      for (var i = 0; i < el.children.length; i++) o[el.children[i].localName] = (el.children[i].textContent || "").trim();
+      return o;
+    }
+    return { s: kids("Session") || {}, rec: kids("Callsign") };
+  }
+  var loginPromise = null;
+  function login() {
+    var c = getCreds();
+    if (!c) return Promise.reject(QRZError("signin"));
+    if (!loginPromise) {
+      loginPromise = get({ username: c.username, password: c.password, agent: AGENT }).then(function (t) {
+        var s = parse(t).s;
+        if (!s.Key) throw QRZError(s.Error || "QRZ login failed");
+        var sess = { key: s.Key, sub: s.SubExp || "" };
+        setSess(sess);
+        return sess;
+      }).finally(function () { loginPromise = null; });
+    }
+    return loginPromise;
+  }
+  // Run fn(key); if QRZ says the session expired, log in again once and retry.
+  function withSession(fn) {
+    var s = getSess();
+    var first = s ? Promise.resolve(s) : login();
+    return first.then(function (s) {
+      return fn(s.key).catch(function (e) {
+        if (!e.session) throw e;
+        return login().then(function (s2) { return fn(s2.key); });
+      });
+    });
+  }
+
+  var cache = {};
+  function cached(k, make) {
+    var hit = cache[k];
+    if (hit && Date.now() - hit.t < TTL) return Promise.resolve(hit.v);
+    return make().then(function (v) { cache[k] = { t: Date.now(), v: v }; return v; });
+  }
+  function lookupRec(call) {
+    return cached("rec:" + call, function () {
+      return withSession(function (key) {
+        return get({ s: key, callsign: call }).then(function (t) {
+          var p = parse(t);
+          if (p.rec) return p.rec;
+          var err = p.s.Error || "No record returned";
+          throw QRZError(err, !p.s.Key && !/not found/i.test(err));
+        });
+      });
+    });
+  }
+  function lookupBio(call) {
+    return cached("bio:" + call, function () {
+      return withSession(function (key) {
+        return get({ s: key, html: call }).then(function (t) {
+          var head = t.slice(0, 400).trim();
+          if (head.indexOf("<?xml") === 0 || head.indexOf("<QRZDatabase") >= 0) {
+            var s = parse(t).s;
+            throw QRZError(s.Error || "Biography not available", !s.Key);
+          }
+          return t;
+        });
+      });
+    });
+  }
+
+  // ── grid squares, distance and bearing ──
+  function gridToLatLon(g) {
+    g = (g || "").trim().toUpperCase();
+    if (!/^[A-R]{2}\d{2}([A-X]{2})?/.test(g)) return null;
+    var lon = (g.charCodeAt(0) - 65) * 20 - 180, lat = (g.charCodeAt(1) - 65) * 10 - 90;
+    lon += +g[2] * 2; lat += +g[3];
+    if (g.length >= 6) { lon += (g.charCodeAt(4) - 65) / 12 + 1 / 24; lat += (g.charCodeAt(5) - 65) / 24 + 1 / 48; }
+    else { lon += 1; lat += 0.5; }
+    return [lat, lon];
+  }
+  function distBearing(a, b) {
+    var r = Math.PI / 180, la1 = a[0] * r, lo1 = a[1] * r, la2 = b[0] * r, lo2 = b[1] * r;
+    var d = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin((la2 - la1) / 2), 2) + Math.cos(la1) * Math.cos(la2) * Math.pow(Math.sin((lo2 - lo1) / 2), 2)));
+    var y = Math.sin(lo2 - lo1) * Math.cos(la2), x = Math.cos(la1) * Math.sin(la2) - Math.sin(la1) * Math.cos(la2) * Math.cos(lo2 - lo1);
+    return { mi: d * 3958.8, km: d * 6371, brg: (Math.atan2(y, x) / r + 360) % 360 };
+  }
+  var COMPASS = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
+
+  // ── recent calls ──
+  function getRecent() { return read(localStorage, K.recent) || []; }
+  function addRecent(c) {
+    write(localStorage, K.recent, [c].concat(getRecent().filter(function (x) { return x !== c; })).slice(0, 20));
+    drawRecent(c);
+  }
+  function drawRecent(cur) {
+    $("#recent").innerHTML = getRecent().map(function (c) {
+      return '<button type="button" data-c="' + esc(c) + '"' + (c === cur ? " aria-current" : "") + ">" + esc(c) + "</button>";
+    }).join("");
+  }
+  $("#recent").addEventListener("click", function (e) { var c = e.target.dataset.c; if (c) go(c); });
+
+  // ── screens ──
+  function welcome() {
+    document.title = "Callsign Lookup · K1KFX";
+    if (!getCreds()) {
+      out.innerHTML = '<div class="card"><div class="msg">' +
+        '<h2>Callsign <span class="k-serif">lookup</span></h2>' +
+        "<p>Big search box, the record, and the whole bio. No ads. It uses your own QRZ.com login, which stays in this browser.</p>" +
+        '<button type="button" class="k-btn k-btn-primary" id="welcomeSignIn">Sign in with QRZ</button></div></div>';
+      $("#welcomeSignIn").onclick = openLogin;
+    } else {
+      out.innerHTML = '<div class="card"><div class="msg">Type a callsign and press Go.</div></div>';
+    }
+  }
+  function errorCard(msg) {
+    out.innerHTML = '<div class="card"><div class="msg err">' + esc(msg) + "</div></div>";
+  }
+  function row(label, html) { return html ? "<div><dt>" + esc(label) + "</dt><dd>" + html + "</dd></div>" : ""; }
+  function safeUrl(u) { u = (u || "").trim(); if (!u) return ""; return /^https?:\/\//i.test(u) ? u : "https://" + u; }
+
+  var current = "";
+  function lookup(call) {
+    current = call;
+    out.innerHTML = '<div class="card"><div class="msg">Looking up ' + esc(call) + "…</div></div>";
+    if (!CALL_RE.test(call)) return errorCard("That doesn't look like a callsign.");
+    if (!getCreds()) { welcome(); openLogin(); return; }
+    lookupRec(call).then(function (r) {
+      if (current !== call) return;
+      render(call, r);
+    }, function (e) {
+      if (current !== call) return;
+      if (e.message === "signin") { welcome(); openLogin(); return; }
+      errorCard(/not found/i.test(e.message) ? call + " isn't in the QRZ database." : e.message);
+    });
+  }
+
+  function render(call, r) {
+    var cs = (r.call || call).toUpperCase();
+    addRecent(cs);
+    document.title = cs + " · Callsign Lookup";
+
+    var name = r.name_fmt || [r.fname, r.nickname ? "“" + r.nickname + "”" : "", r.name].filter(Boolean).join(" ");
+    var loc = [r.addr2, r.state, r.country].filter(Boolean).join(", ");
+    var addr = [r.attn, r.addr1, [r.addr2, r.state, r.zip].filter(Boolean).join(" "), r.country].filter(Boolean).map(esc).join("<br>");
+
+    var grid = getGrid(), dist = "";
+    var home = gridToLatLon(grid);
+    var there = (r.lat && r.lon) ? [+r.lat, +r.lon] : gridToLatLon(r.grid);
+    if (home && there) {
+      var d = distBearing(home, there);
+      if (d.km > 1) dist = '<span class="big">' + Math.round(d.mi).toLocaleString() + " mi</span><br>" +
+        Math.round(d.km).toLocaleString() + " km · " + Math.round(d.brg) + "° " + COMPASS[Math.round(d.brg / 22.5) % 16];
+    }
+
+    var badges = [
+      r.class && ["Class " + r.class],
+      r.lotw === "1" && ["LoTW", 1], r.eqsl === "1" && ["eQSL"], r.mqsl === "1" && ["Paper QSL"],
+      r.cqzone && ["CQ " + r.cqzone], r.ituzone && ["ITU " + r.ituzone]
+    ].filter(Boolean).map(function (b) { return '<span class="badge' + (b[1] ? " hot" : "") + '">' + esc(b[0]) + "</span>"; }).join("");
+
+    var qrzPage = "https://www.qrz.com/db/" + encodeURIComponent(cs);
+    var photo = r.image ? '<img class="photo" src="' + esc(r.image) + '" alt="Photo of ' + esc(cs) + '" referrerpolicy="no-referrer">' : "";
+    var url = safeUrl(r.url);
+    var sess = getSess() || {};
+    var subscriber = sess.sub && !/non-subscriber/i.test(sess.sub);
+
+    out.innerHTML =
+      '<div class="card">' +
+        '<div class="top' + (photo ? "" : " nophoto") + '">' + photo +
+          "<div>" +
+            '<div class="callsign">' + esc(cs) + "</div>" +
+            (name ? '<div class="name">' + esc(name) + "</div>" : "") +
+            (loc ? '<div class="loc">' + esc(loc) + "</div>" : "") +
+            '<div class="badges">' + badges + "</div>" +
+          "</div>" +
+        "</div>" +
+        "<dl>" +
+          row("Grid", esc(r.grid)) +
+          row(grid ? "Distance from " + grid.toUpperCase() : "", dist) +
+          row("County", esc(r.county)) +
+          row("Mailing address", addr) +
+          row("Email", r.email ? '<a href="mailto:' + esc(r.email) + '">' + esc(r.email) + "</a>" : "") +
+          row("Website", url ? '<a href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(url.replace(/^https?:\/\//i, "")) + "</a>" : "") +
+          row("QSL manager", esc(r.qslmgr)) +
+          row("Aliases / previous", esc([r.aliases, r.p_call].filter(Boolean).join(", "))) +
+          row("License", esc([r.efdate && "from " + r.efdate, r.expdate && "expires " + r.expdate].filter(Boolean).join(", "))) +
+          row("Born", esc(r.born)) +
+          row("Time zone", esc(r.TimeZone)) +
+          row("QRZ views", r.u_views ? (+r.u_views).toLocaleString() : "") +
+        "</dl>" +
+      "</div>" +
+      '<div class="card">' +
+        '<div class="biohead"><h3>Biography</h3><a href="' + qrzPage + '" target="_blank" rel="noopener">Open on QRZ ↗</a></div>' +
+        '<div id="bioBox">' + (r.bio && r.bio !== "0"
+          ? '<div class="msg">Loading biography…</div>'
+          : '<div class="msg">' + (subscriber ? "No biography posted." : "No biography returned. QRZ only sends bios to XML subscribers.") + "</div>") +
+        "</div>" +
+      "</div>";
+
+    var ph = out.querySelector(".photo");
+    if (ph) {
+      ph.onerror = function () { ph.remove(); out.querySelector(".top").classList.add("nophoto"); };
+      ph.onclick = function () { $("#lightbox img").src = ph.src; $("#lightbox").style.display = "flex"; };
+    }
+    if (r.bio && r.bio !== "0") {
+      lookupBio(cs).then(function (html) {
+        if (current !== call) return;
+        var f = document.createElement("iframe");
+        f.id = "bio"; f.title = "Biography of " + cs;
+        // No allow-same-origin: the bio can't touch this page or the saved login.
+        f.setAttribute("sandbox", "allow-scripts allow-popups allow-popups-to-escape-sandbox");
+        f.srcdoc = rewriteBio(html);
+        var box = $("#bioBox"); box.innerHTML = ""; box.appendChild(f);
+      }, function (e) {
+        if (current !== call) return;
+        $("#bioBox").innerHTML = '<div class="msg">Biography unavailable: ' + esc(e.message) + "</div>";
+      });
+    }
+  }
+
+  // ── bio: QRZ's HTML, made to fit the screen, reporting its height back ──
+  var BIO_HEAD = '<base href="https://www.qrz.com/" target="_blank">' +
+    '<meta name="viewport" content="width=device-width, initial-scale=1">' +
+    "<style>" +
+    "html{margin:0!important;padding:0!important}" +
+    "body{margin:0!important;padding:12px!important;max-width:100%!important;overflow-x:hidden!important;-webkit-text-size-adjust:100%;font-size:17px;line-height:1.5;background:#fff;color:#111}" +
+    "*,*::before,*::after{box-sizing:border-box}" +
+    "img,video,iframe,embed,object,canvas,svg{max-width:min(100%,calc(100vw - 24px))!important;height:auto!important}" +
+    'iframe[src*="youtube"],iframe[src*="vimeo"]{aspect-ratio:16/9;width:100%!important}' +
+    "table,div,p,center,span,font{max-width:calc(100vw - 24px)!important}" +
+    'table[width],td[width],th[width],div[style*="width"]{width:auto!important}' +
+    "td,th,p,div{overflow-wrap:anywhere}pre{white-space:pre-wrap}" +
+    "</style><script>(function(){" +
+    "function send(){if(!document.body)return;var b=0,k=document.body.children;" +
+    "for(var i=0;i<k.length;i++){if(k[i].tagName==='SCRIPT'||k[i].tagName==='STYLE')continue;b=Math.max(b,k[i].getBoundingClientRect().bottom);}" +
+    "parent.postMessage({qrzBioHeight:Math.ceil(Math.max(b+window.scrollY+16,document.documentElement.scrollHeight))},'*');}" +
+    "function fit(){var W=document.documentElement.clientWidth-24;document.querySelectorAll('table').forEach(function(t){" +
+    "if(t.getBoundingClientRect().width>W+1){t.style.setProperty('width','100%','important');t.style.setProperty('table-layout','fixed','important');}});send();}" +
+    "addEventListener('load',fit);addEventListener('resize',fit);" +
+    "document.addEventListener('DOMContentLoaded',function(){fit();if(window.ResizeObserver)new ResizeObserver(function(){requestAnimationFrame(send)}).observe(document.body);});" +
+    "document.addEventListener('load',send,true);setTimeout(send,50);setTimeout(send,800);setTimeout(send,2500);" +
+    "})();<\/script>";
+  function rewriteBio(html) {
+    var m = /<head[^>]*>/i.exec(html);
+    if (m) return html.slice(0, m.index + m[0].length) + BIO_HEAD + html.slice(m.index + m[0].length);
+    return "<!doctype html><html><head><meta charset='utf-8'>" + BIO_HEAD + "</head><body>" + html + "</body></html>";
+  }
+  window.addEventListener("message", function (e) {
+    var h = e.data && e.data.qrzBioHeight, f = $("#bio");
+    if (f && h && e.source === f.contentWindow && Math.abs(f.offsetHeight - h) > 2) f.style.height = h + "px";
+  });
+  $("#lightbox").onclick = function () { $("#lightbox").style.display = "none"; };
+
+  // ── menu ──
+  var menu = $("#menu");
+  $("#menuBtn").onclick = function () {
+    var c = getCreds(), s = getSess() || {};
+    $("#menuHint").textContent = c
+      ? "Signed in to QRZ as " + c.username.toUpperCase() + (s.sub ? " · subscription: " + s.sub : "") + (getGrid() ? " · grid " + getGrid().toUpperCase() : "")
+      : "Not signed in to QRZ.";
+    menu.showModal();
+  };
+  menu.addEventListener("click", function (e) {
+    if (e.target === menu) return menu.close();
+    var act = e.target.dataset && e.target.dataset.act;
+    if (!act) return;
+    menu.close();
+    if (act === "login") openLogin();
+    if (act === "clear") { write(localStorage, K.recent, null); drawRecent(); }
+    if (act === "signout") {
+      setCreds(null, true); setCreds(null, false); setSess(null);
+      write(localStorage, K.sess, null); write(sessionStorage, K.sess, null);
+      cache = {}; current = ""; history.replaceState(null, "", location.pathname); input.value = ""; welcome();
+    }
+  });
+
+  // ── sign in ──
+  var dlg = $("#login"), status = $("#loginStatus");
+  function openLogin() {
+    var c = getCreds();
+    $("#lu").value = c ? c.username : "";
+    $("#lp").value = c ? c.password : "";
+    $("#lg").value = getGrid();
+    $("#lr").checked = c ? !!read(localStorage, K.creds) : true;
+    status.textContent = ""; status.className = "";
+    dlg.showModal();
+    (c ? $("#lg") : $("#lu")).focus();
+  }
+  $("#loginCancel").onclick = function () { dlg.close(); };
+  dlg.addEventListener("click", function (e) { if (e.target === dlg) dlg.close(); });
+  $("#loginForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var c = { username: $("#lu").value.trim().toUpperCase(), password: $("#lp").value };
+    var grid = $("#lg").value.trim().toUpperCase();
+    if (grid && !gridToLatLon(grid)) { status.className = "err"; status.textContent = "That grid square doesn't look right (example: EN10PR)."; return; }
+    setCreds(c, $("#lr").checked); setSess(null); cache = {};
+    status.className = ""; status.textContent = "Signing in to QRZ…";
+    $("#loginGo").disabled = true;
+    login().then(function (s) {
+      if (grid) return grid;
+      // No grid typed: use the grid from your own QRZ record.
+      return lookupRec(c.username).then(function (me) { return me.grid || ""; }, function () { return ""; });
+    }).then(function (g) {
+      write(localStorage, K.grid, g || null);
+      dlg.close();
+      if (current) lookup(current); else welcome();
+      input.focus();
+    }, function (err) {
+      setCreds(null, true); setCreds(null, false);
+      status.className = "err";
+      status.textContent = err.message === "signin" ? "Enter your QRZ login." : err.message;
+    }).finally(function () { $("#loginGo").disabled = false; });
+  });
+
+  // ── routing: #CALL so the back button and bookmarks work ──
+  function go(c) {
+    c = c.trim().toUpperCase().replace(/\s+/g, "");
+    if (!c) return;
+    input.value = c; input.blur();
+    if (decodeURIComponent(location.hash.slice(1)) === c) lookup(c); else location.hash = c;
+    window.scrollTo(0, 0);
+  }
+  $("#f").addEventListener("submit", function (e) { e.preventDefault(); go(input.value); });
+  window.addEventListener("hashchange", function () {
+    var c = decodeURIComponent(location.hash.slice(1)).toUpperCase();
+    if (c) { input.value = c; lookup(c); } else { current = ""; input.value = ""; welcome(); }
+  });
+  input.addEventListener("focus", function () { input.select(); });
+
+  drawRecent();
+  if (location.hash.length > 1) { var c0 = decodeURIComponent(location.hash.slice(1)).toUpperCase(); input.value = c0; lookup(c0); }
+  else { welcome(); if (getCreds()) input.focus(); }
+})();
+</script>
+</body>
+</html>
